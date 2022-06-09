@@ -36,13 +36,13 @@ namespace cg
 	template<typename T>
 	inline resource<T>::resource(size_t size)
 	{
-		date.resize(size);
+		data.resize(size);
 		stride = 0;
 	}
 	template<typename T>
 	inline resource<T>::resource(size_t x_size, size_t y_size)
 	{
-		date.resize(x_size * y_size);
+		data.resize(x_size * y_size);
 		stride = x_size ;
 	}
 	template<typename T>
@@ -54,17 +54,17 @@ namespace cg
 	template<typename T>
 	inline const T* resource<T>::get_data()
 	{
-		return date.data();
+		return data.data();
 	}
 	template<typename T>
 	inline T& resource<T>::item(size_t item)
 	{
-		return date.at(item);
+		return data.at(item);
 	}
 	template<typename T>
 	inline T& resource<T>::item(size_t x, size_t y)
 	{
-		return date.at(y*stride+x);
+		return data.at(y*stride+x);
 	}
 	template<typename T>
 	inline size_t resource<T>::get_size_in_bytes() const
@@ -108,10 +108,11 @@ namespace cg
 			out.r = std::clamp(static_cast<int>(255.f *color.r),0,255);
 			out.g = std::clamp(static_cast<int>(255.f *color.g),0,255);
 			out.b = std::clamp(static_cast<int>(255.f *color.b),0,255);
+			return out;
 		};
 		static unsigned_color from_float3(const float3& color)
 		{
-			unsigned_color{};
+			unsigned_color out{};
 			float3 preprocesssed = clamp(255.f*color,0.f,255.f);
             out.r=static_cast<int>(preprocesssed.x);
             out.g=static_cast<int>(preprocesssed.y);
@@ -137,9 +138,28 @@ namespace cg
 	};
 
 
-	// TODO: Lab 1.03. Implement `cg::vertex` struct
 	struct vertex
 	{
+		float x;
+		float y;
+		float z;
+		float nx;
+		float ny;
+
+		float nz;
+		float u;
+		float v;
+		float ambient_r;
+		float ambient_g;
+		float ambient_b;
+		float diffuse_r;
+		float diffuse_g;
+		float diffuse_b;
+		float emissive_r;
+		float emissive_g;
+		float emissive_b;
+
+
 	};
 
 }// namespace cg
