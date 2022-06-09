@@ -2,6 +2,7 @@
 
 #include "resource.h"
 
+#include <cfloat>
 #include <functional>
 #include <iostream>
 #include <linalg.h>
@@ -63,7 +64,7 @@ namespace cg::renderer
 			const RT& in_clear_value, const float in_depth)
 	{
 		if(render_target){
-			for(size_t i=0; i<render_target->get_number_of_elemets();i++){
+			for(size_t i=0; i < render_target->get_number_of_elements();i++){
 				render_target->item(i)=in_clear_value;
 			}
 		}
@@ -105,6 +106,8 @@ namespace cg::renderer
 	rasterizer<VB, RT>::edge_function(float2 a, float2 b, float2 c)
 	{
 		// TODO: Lab 1.05. Implement `cg::renderer::rasterizer::edge_function` method
+		return 0.f;
+
 
 	}
 
@@ -112,6 +115,7 @@ namespace cg::renderer
 	inline bool rasterizer<VB, RT>::depth_test(float z, size_t x, size_t y)
 	{
 		// TODO: Lab 1.06. Implement depth_test function of cg::renderer::rasterizer class
+		return false;
 	}
 
 }// namespace cg::renderer
