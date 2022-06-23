@@ -94,7 +94,7 @@ void cg::renderer::ray_tracing_renderer::render()
 		/*for (auto& light: lights) {
 			cg::renderer::ray to_light(position,
 									   light.position - position);
-			//Lab 2.04. Adjust closest_hit_shader of raytracer to cast shadows rays and to ignore occluded lights
+
 			auto shadow_payload = shadow_raytracer->trace_ray(
 					to_light, 1,
 					length(light.position - position));
@@ -103,7 +103,8 @@ void cg::renderer::ray_tracing_renderer::render()
 				result_color += triangle.diffuse * light.color *
 								std::max(dot(normal, to_light.direction), 0.f);
 			}
-		}*/
+		}
+		 */
 
 		payload.color = cg::color::from_float3(result_color);
 		return payload;
