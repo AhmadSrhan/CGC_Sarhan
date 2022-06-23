@@ -134,7 +134,7 @@ namespace cg::renderer
 			const RT& in_clear_value)
 	{
 		for(size_t i=0 ; i< render_target->get_number_of_elements();i++){
-			render_target->item = in_clear_value;
+			render_target->item(i) = in_clear_value;
 		}
 
 		// TODO: Lab 2.06. Add `history` resource in `raytracer` class
