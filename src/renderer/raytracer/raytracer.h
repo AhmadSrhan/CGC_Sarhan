@@ -55,6 +55,8 @@ namespace cg::renderer
 			const VB& vertex_a, const VB& vertex_b, const VB& vertex_c)
 	{
 		// TODO: Lab 2.02. Implement a constructor of triangle struct
+
+
 	}
 
 	template<typename VB>
@@ -121,14 +123,20 @@ namespace cg::renderer
 	inline void raytracer<VB, RT>::set_render_target(
 			std::shared_ptr<resource<RT>> in_render_target)
 	{
-		// TODO: Lab 2.01. Implement set_render_target, set_viewport, and clear_render_target methods of raytracer class
+
+		render_target = in_render_target;
+
+
 	}
 
 	template<typename VB, typename RT>
 	inline void raytracer<VB, RT>::clear_render_target(
 			const RT& in_clear_value)
 	{
-		// TODO: Lab 2.01. Implement set_render_target, set_viewport, and clear_render_target methods of raytracer class
+		for(size_t i=0 ; i< render_target->get_number_of_elements();i++){
+			render_target->item = in_clear_value;
+		}
+
 		// TODO: Lab 2.06. Add `history` resource in `raytracer` class
 	}
 	template<typename VB, typename RT>
@@ -152,7 +160,8 @@ namespace cg::renderer
 	inline void raytracer<VB, RT>::set_viewport(size_t in_width,
 												size_t in_height)
 	{
-		// TODO: Lab 2.01. Implement set_render_target, set_viewport, and clear_render_target methods of raytracer class
+		height = in_height;
+		width = in_width;
 		// TODO: Lab 2.06. Add `history` resource in `raytracer` class
 	}
 
