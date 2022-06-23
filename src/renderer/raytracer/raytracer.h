@@ -54,7 +54,7 @@ namespace cg::renderer
 	inline triangle<VB>::triangle(
 			const VB& vertex_a, const VB& vertex_b, const VB& vertex_c)
 	{
-
+		//Lab 2.02. Implement a constructor of triangle struct
 		a = float3{vertex_a.x, vertex_a.y, vertex_a.z};
 		b = float3{vertex_b.x, vertex_b.y, vertex_b.z};
 		c = float3{vertex_c.x, vertex_c.y, vertex_c.z};
@@ -136,7 +136,7 @@ namespace cg::renderer
 	inline void raytracer<VB, RT>::set_render_target(
 			std::shared_ptr<resource<RT>> in_render_target)
 	{
-
+		//Lab 2.01. Implement set_render_target, set_viewport, and clear_render_target methods of raytracer class
 		render_target = in_render_target;
 	}
 
@@ -144,32 +144,32 @@ namespace cg::renderer
 	inline void raytracer<VB, RT>::clear_render_target(
 			const RT& in_clear_value)
 	{
-
+		//Lab 2.01. Implement set_render_target, set_viewport, and clear_render_target methods of raytracer class
 		for (size_t i = 0; i < render_target->get_number_of_elements(); i++)
 		{
 			render_target->item(i) = in_clear_value;
 
-
+			//Lab 2.06. Add `history` resource in `raytracer` class
 			history->item(i) = float3{0.f, 0.f, 0.f};
 		}
 	}
 	template<typename VB, typename RT>
 	void raytracer<VB, RT>::set_index_buffers(std::vector<std::shared_ptr<cg::resource<unsigned int>>> in_index_buffers)
 	{
-
+		//Lab 2.02. Implement set_vertex_buffers and set_index_buffers of raytracer class
 		index_buffers = in_index_buffers;
 	}
 	template<typename VB, typename RT>
 	inline void raytracer<VB, RT>::set_vertex_buffers(std::vector<std::shared_ptr<cg::resource<VB>>> in_vertex_buffers)
 	{
-
+		//Lab 2.02. Implement set_vertex_buffers and set_index_buffers of raytracer class
 		vertex_buffers = in_vertex_buffers;
 	}
 
 	template<typename VB, typename RT>
 	inline void raytracer<VB, RT>::build_acceleration_structure()
 	{
-
+		//Lab 2.05. Implement build_acceleration_structure method of raytracer class
 		for (size_t shape_id = 0; shape_id < index_buffers.size(); shape_id++)
 		{
 			auto& index_buffer = index_buffers[shape_id];
@@ -192,10 +192,10 @@ namespace cg::renderer
 	inline void raytracer<VB, RT>::set_viewport(size_t in_width,
 												size_t in_height)
 	{
-
+		//Lab 2.01. Implement set_render_target, set_viewport, and clear_render_target methods of raytracer class
 		height = in_height;
 		width = in_width;
-
+		//Lab 2.06. Add `history` resource in `raytracer` class
 		history = std::make_shared<cg::resource<float3>>(width, height);
 	}
 
@@ -209,7 +209,7 @@ namespace cg::renderer
 		{
 			std::cout<<"Tracing frame #" << frame_id + 1<<"\n";
 			float2 jitter = get_jitter(frame_id);
-
+			//Lab 2.01. Implement ray_generation and trace_ray method of raytracer class
 			for (int x = 0; x < width; x++)
 			{
 #pragma omp parallel for
@@ -234,25 +234,26 @@ namespace cg::renderer
 				}
 			}
 		}
-
+		//Lab 2.06. Add `history` resource in `raytracer` class
+		//Lab 2.06. Implement TAA in `ray_generation` method of `raytracer` class
 	}
 
 	template<typename VB, typename RT>
 	inline payload raytracer<VB, RT>::trace_ray(
 			const ray& ray, size_t depth, float max_t, float min_t) const
 	{
-
+		//Lab 2.01. Implement ray_generation and trace_ray method of raytracer class
 		if (depth == 0)
 		{
 			return miss_shader(ray);
 		}
 		depth--;
-
+		//Lab 2.02. Adjust trace_ray method of raytracer class to traverse geometry and call a closest hit shader
 		payload closest_hit_payload = {};
 		closest_hit_payload.t = max_t;
 		const triangle<VB>* closest_triangle = nullptr;
 
-
+		//Lab 2.05. Adjust trace_ray method of raytracer class to traverse the acceleration structure
 		for (auto& aabb: acceleration_structures)
 		{
 			if (!aabb.aabb_test(ray))
@@ -267,7 +268,7 @@ namespace cg::renderer
 					closest_hit_payload = payload;
 					closest_triangle = &triangle;
 
-
+					//Lab 2.04. Adjust `trace_ray` method of `raytracer` to use `any_hit_shader`
 					if (any_hit_shader)
 					{
 						return any_hit_shader(ray, payload, triangle);
@@ -290,7 +291,7 @@ namespace cg::renderer
 	inline payload raytracer<VB, RT>::intersection_shader(
 			const triangle<VB>& triangle, const ray& ray) const
 	{
-
+		//Lab 2.02. Implement an intersection_shader method of raytracer class
 		payload payload{};
 		payload.t = -1.f;
 
@@ -321,7 +322,7 @@ namespace cg::renderer
 	template<typename VB, typename RT>
 	float2 raytracer<VB, RT>::get_jitter(int frame_id)
 	{
-
+		//Lab 2.06. Implement `get_jitter` method of `raytracer` class
 		float2 result{0.f, 0.f};
 		constexpr int base_x = 2;
 		int index = frame_id + 1;
@@ -351,7 +352,7 @@ namespace cg::renderer
 	template<typename VB>
 	inline void aabb<VB>::add_triangle(const triangle<VB> triangle)
 	{
-
+		//Lab 2.05. Implement aabb class
 		if (triangles.empty()) {
 			aabb_max = aabb_min = triangle.a;
 		}
@@ -368,14 +369,14 @@ namespace cg::renderer
 	template<typename VB>
 	inline const std::vector<triangle<VB>>& aabb<VB>::get_triangles() const
 	{
-
+		//Lab 2.05. Implement aabb class
 		return triangles;
 	}
 
 	template<typename VB>
 	inline bool aabb<VB>::aabb_test(const ray& ray) const
 	{
-
+		//Lab 2.05. Implement aabb class
 		float3 inv_ray_direction = float3{1.f} / ray.direction;
 		float3 t0 = (aabb_max - ray.position) * inv_ray_direction;
 		float3 t1 = (aabb_min - ray.position) * inv_ray_direction;
