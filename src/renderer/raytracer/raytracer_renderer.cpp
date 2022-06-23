@@ -52,7 +52,16 @@ void cg::renderer::ray_tracing_renderer::render()
 	};
 	raytracer->closest_hit_shader= [&](const ray& ray, payload& payload,
 										const triangle<cg::vertex>& triangle, size_t depth){
-		float3 result_color = triangle.diffuse;
+		float3 position = ray.position + ray.direction*payload.t;
+		float3 normal = normalize(
+				payload.bary.x * triangle.na + payload.bary.y * triangle.nb + payload.bary.z*triangle.nc
+				);
+		float3 result_color = triangle.emissive;
+		for (auto & light: lights){
+			cg::renderer::ray to_light(position,
+									   light.position-position);
+			result_color += triangle.diffuse * light.color * std::max(dot(normal,to_light.direction),0.f);
+		}
 		payload.color = cg::color::from_float3(result_color);
 		return payload;
 
@@ -71,7 +80,6 @@ void cg::renderer::ray_tracing_renderer::render()
 
     cg::utils::save_resource(*render_target,settings->result_path);
 
-	// TODO: Lab 2.03. Adjust closest_hit_shader of raytracer to implement Lambertian shading model
 	lights.push_back({float3{0.f,1.58f,-0.03f},
 	float3{0.78f,0.78f,0.78f}});
 	// TODO: Lab 2.04. Define any_hit_shader and miss_shader for shadow_raytracer
