@@ -108,7 +108,7 @@ namespace cg::renderer
 	template<typename VB, typename RT>
 	inline void rasterizer<VB, RT>::draw(size_t num_vertexes, size_t vertex_offset)
 	{
-
+		//Lab 1.04. Add 'IA' and 'Vertex shader' stages to 'draw' method of 'cg::renderer::rasterizer'
 		size_t vertex_id = vertex_offset;
 		while (vertex_id < vertex_offset + num_vertexes)
 		{
@@ -133,7 +133,7 @@ namespace cg::renderer
 				vertex.y = (-vertex.y + 1.f) * height / 2.f;
 			}
 
-
+			//Lab 1.05. Add `Rasterization` and `Pixel shader` stages to `draw` method of `cg::renderer::rasterizer`
 
 			float2 bounding_box_begin{
 					std::clamp(
@@ -172,23 +172,17 @@ namespace cg::renderer
 					 y <= static_cast<int>(bounding_box_end.y); y++)
 				{
 					float2 point{static_cast<float>(x), static_cast<float>(y)};
-
 					float edge0 = edge_function(float2{vertices[0].x, vertices[0].y},
 												float2{vertices[1].x, vertices[1].y},
-												point
-												);
-
+												point);
 					float edge1 = edge_function(float2{vertices[1].x, vertices[1].y},
 												float2{vertices[2].x, vertices[2].y},
-												point
-												);
-
+												point);
 					float edge2 = edge_function(float2{vertices[2].x, vertices[2].y},
 												float2{vertices[0].x, vertices[0].y},
-												point
-												);
+												point);
 
-
+					//If the edges are positive (we are in the triangle) add the colors
 					if(edge0 >= 0.f && edge1 >= 0.f && edge2 >= 0.f)
 					{
 						float u = edge1 / edge;
