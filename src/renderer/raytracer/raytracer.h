@@ -63,9 +63,9 @@ namespace cg::renderer
 		nb= float3{vertex_b.nx,vertex_b.ny,vertex_b.nz};
 		nc= float3{vertex_c.nx,vertex_c.ny,vertex_c.nz};
 
-		ambient = {vertex_a.ambient, vertex_a.ambient_g,vertex_a.ambient_b};
-		diffuse = {vertex_a.diffuse, vertex_a.diffuse_g,vertex_a.diffuse_b};
-		emissive = {vertex_a.emmissive_r, vertex_a.emissive_g,vertex_a.emissive_b};
+		ambient = {vertex_a.ambient_r, vertex_a.ambient_g,vertex_a.ambient_b};
+		diffuse = {vertex_a.diffuse_r, vertex_a.diffuse_g,vertex_a.diffuse_b};
+		emissive = {vertex_a.emissive_r, vertex_a.emissive_g,vertex_a.emissive_b};
 
 
 	}
@@ -165,7 +165,7 @@ namespace cg::renderer
 	template<typename VB, typename RT>
 	inline void raytracer<VB, RT>::build_acceleration_structure()
 	{
-		for ( size_t shape_id=0; shape_id <index_buffers.size();shape_id++){
+		for ( size_t shape_id=0; shape_id < index_buffers.size();shape_id++){
 			auto& index_buffer = index_buffers[shape_id];
 			auto& vertex_buffer = vertex_buffers[shape_id];
 			size_t index_id=0;
@@ -266,7 +266,7 @@ namespace cg::renderer
 		if(v<0.f || u+v>1.f){
 			return payload;
 		}
-		payload = dot(triangle.ca,qvec)*inv_det;
+		payload.t = dot(triangle.ca,qvec)*inv_det;
 		payload.bary= float3{1.f - u-v,u,v};
 		return payload;
 
