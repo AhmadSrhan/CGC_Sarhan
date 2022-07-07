@@ -71,9 +71,9 @@ void cg::renderer::dx12_renderer::initialize_device(ComPtr<IDXGIFactory4>& dxgi_
 	dxgi_factory->EnumAdapters1(0,&hardware_adapter);
 #ifdef _DEBUG
 	DXGI_ADAPTER_DESC adapter_desc = {};
-	harware_adapter->GetDesc(&adapter_desc);
-	OutputDEbugString(adapter_desc.Description);
-	OutoutDebugString(L"\n");
+	hardware_adapter->GetDesc(&adapter_desc);
+	OutputDebugString(adapter_desc.Description);
+	OutputDebugString(L"\n");
 #endif
 	//Lab 3.02. Create a device object
 	THROW_IF_FAILED(D3D12CreateDevice(hardware_adapter.Get(),
