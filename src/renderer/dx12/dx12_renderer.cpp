@@ -276,8 +276,8 @@ void cg::renderer::dx12_renderer::load_assets()
 	// Lab 3.03. Allocate memory for vertex and index buffers
 	// Lab 3.03. Create committed resources for vertex, index and constant buffers on upload heap
 	//  Lab 3.03. Copy resource data to suitable resources
-	// TODO Lab 3.04. Create a descriptor heap for a constant buffer
-	// TODO Lab 3.04. Create a constant buffer view
+	// Lab 3.04. Create a descriptor heap for a constant buffer
+	//   Create a constant buffer view
 	vertex_buffers.resize(model->get_vertex_buffers().size());
 	vertex_buffer_views.resize(model->get_vertex_buffers().size());
 
@@ -332,6 +332,16 @@ void cg::renderer::dx12_renderer::load_assets()
 			constant_buffer->Map(0, &read_range,
 									  reinterpret_cast<void**>(&constant_buffer_data_begin)));
 
+	cbv_srv_heap.create_heap(
+			device,
+			D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+			1,
+			D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+
+
+	create_constant_buffer_view(
+			constant_buffer,
+			cbv_srv_heap.get_cpu_descriptor_handle(0));
 }
 
 
