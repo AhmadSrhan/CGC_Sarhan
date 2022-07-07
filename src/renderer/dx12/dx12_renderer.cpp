@@ -552,31 +552,33 @@ void cg::renderer::dx12_renderer::load_assets()
 				index_buffer_size
 		);
 
+		// Constant buffer
+		std::wstring const_buffer_name(L"Constant buffer ");
+		create_resource_on_upload_heap(constant_buffer,
+									   64* 1024,
+									   const_buffer_name);
+
+		copy_data(&cb, sizeof(cb),constant_buffer);
+		CD3DX12_RANGE read_rage(0,0);
+
+		CD3DX12_RANGE read_range(0,0);
+		THROW_IF_FAILED(
+				constant_buffer->Map(0, &read_range,
+									 reinterpret_cast<void**>(&constant_buffer_data_begin)));
+
+		cbv_srv_heap.create_heap(
+				device,
+				D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+				1,
+				D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+
+
+		create_constant_buffer_view(
+				constant_buffer,
+				cbv_srv_heap.get_cpu_descriptor_handle(0));
+
 	}
-	// Constant buffer
-	std::wstring const_buffer_name(L"Constant buffer ");
-	create_resource_on_upload_heap(constant_buffer,
-								   64* 1024,
-								   const_buffer_name);
 
-	copy_data(&cb, sizeof(cb),constant_buffer);
-	CD3DX12_RANGE read_rage(0,0);
-
-	CD3DX12_RANGE read_range(0,0);
-	THROW_IF_FAILED(
-			constant_buffer->Map(0, &read_range,
-									  reinterpret_cast<void**>(&constant_buffer_data_begin)));
-
-	cbv_srv_heap.create_heap(
-			device,
-			D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-			1,
-			D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
-
-
-	create_constant_buffer_view(
-			constant_buffer,
-			cbv_srv_heap.get_cpu_descriptor_handle(0));
 
 	// Create a fence
 	THROW_IF_FAILED(device->CreateFence(
@@ -602,7 +604,8 @@ void cg::renderer::dx12_renderer::populate_command_list()
 
 
 	// Reset
-	THROW_IF_FAILED(command_allocators[frame_index].Reset());
+
+	THROW_IF_FAILED(command_allocators[frame_index]->Reset());
 	THROW_IF_FAILED(command_list->Reset(
 			command_allocators[frame_index].Get(),
 			pipeline_state.Get()));
@@ -612,7 +615,7 @@ void cg::renderer::dx12_renderer::populate_command_list()
 	ID3D12DescriptorHeap* heaps[] = {cbv_srv_heap.get()};
 	command_list->SetDescriptorHeaps(
 			_countof(heaps), heaps);
-	command_list->SetComputeRootDescriptorTable(
+	command_list->SetGraphicsRootDescriptorTable(
 			0, cbv_srv_heap.get_gpu_descriptor_handle(0));
 	command_list->RSSetViewports(1, &view_port);
 	command_list->RSSetScissorRects(
@@ -641,7 +644,7 @@ void cg::renderer::dx12_renderer::populate_command_list()
 			nullptr);
 	command_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	for (size_t s = 0; s < model->get_vertex_buffers().size(); ++s) {
+	for (size_t s = 0; s < model->get_vertex_buffers().size(); s++) {
 		command_list->IASetVertexBuffers(0, 1, &vertex_buffer_views[s]);
 		command_list->IASetIndexBuffer(&index_buffer_views[s]);
 		command_list->DrawIndexedInstanced(
@@ -659,8 +662,9 @@ void cg::renderer::dx12_renderer::populate_command_list()
 						D3D12_RESOURCE_STATE_RENDER_TARGET,
 						D3D12_RESOURCE_STATE_PRESENT));
 
-		THROW_IF_FAILED(command_list->Close());
+
 	}
+	THROW_IF_FAILED(command_list->Close());
 
 
 }
